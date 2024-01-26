@@ -10,6 +10,9 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ACCESS_TOKEN'] = os.getenv("ACCESS_TOKEN")
 
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
+
 # API endpoint to process the uploaded file with an executable
 @app.route('/upload', methods=['POST'])
 def process_file():
@@ -44,6 +47,4 @@ def process_file():
     
 
 if __name__ == '__main__':
-    if not os.path.exists(app.config['UPLOAD_FOLDER']):
-        os.makedirs(app.config['UPLOAD_FOLDER'])
     app.run(host="0.0.0.0")

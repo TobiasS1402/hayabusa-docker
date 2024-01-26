@@ -17,6 +17,3 @@ RUN rm hayabusa.zip hayabusa/hayabusa-2.12.0-lin-aarch64-gnu hayabusa/hayabusa-2
 EXPOSE 9000
 
 CMD ["gunicorn","--bind","0.0.0.0:9000", "--access-logfile", "-", "app:app"]
-
-
-
