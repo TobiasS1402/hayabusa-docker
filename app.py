@@ -8,8 +8,7 @@ import datetime
 app = Flask(__name__)
 
 app.config['UPLOAD_FOLDER'] = 'uploads'
-
-app.config['ACCESS_TOKEN'] = '7pNpFt2aeG5RkmS3T6Yy'
+app.config['ACCESS_TOKEN'] = os.getenv("ACCESS_TOKEN")
 
 # API endpoint to process the uploaded file with an executable
 @app.route('/upload', methods=['POST'])
@@ -32,7 +31,7 @@ def process_file():
             filename = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(timestamp + "_" + file.filename))
             file.save(filename)
 
-            subprocess.call(["/app/hayabusa/hayabusa-2.12.0-lin-x64-musl", "json-timeline", "-f", f"/app/{filename}", "-w", "-L", "-o", f"/app/{filename}.json"])
+            subprocess.call(["/app/hayabusa/hayabusa-2.12.0-lin-x64-musl", "json-timeline", "-f", f"/app/{filename}", "-m", "low", "-w", "-L", "-q", "-o", f"/app/{filename}.json"])
 
             try:
                 with open(f"/app/{filename}.json", 'r') as f:
