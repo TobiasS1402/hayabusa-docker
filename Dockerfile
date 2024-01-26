@@ -14,9 +14,9 @@ RUN unzip hayabusa.zip -d hayabusa && chmod +x hayabusa/hayabusa*
 
 RUN rm hayabusa.zip hayabusa/hayabusa-2.12.0-lin-aarch64-gnu hayabusa/hayabusa-2.12.0-lin-x64-gnu hayabusa/*.md hayabusa/*.txt 
 
-EXPOSE 5000
+EXPOSE 9000
 
-CMD ["python", "app.py"]
+CMD ["gunicorn","--bind","0.0.0.0:9000", "--access-logfile", "-", "app:app"]
 
 
 
