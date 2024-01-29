@@ -27,21 +27,28 @@ def process_file():
         if file.filename == '':
             return jsonify({"error": "No selected file"}), 400
         
-        if file:
-            # Save the uploaded file
-            current_datetime = datetime.datetime.now()
-            timestamp = current_datetime.strftime("%Y%m%d_%H%M%S")
-            filename = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(timestamp + "_" + file.filename))
-            file.save(filename)
+        try:
+            if file:
+                # Save the uploaded file
+                current_datetime = datetime.datetime.now()
+                timestamp = current_datetime.strftime("%Y%m%d_%H%M%S")
+                filename = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(timestamp + "_" + file.filename))
+                file.save(filename)
 
-            subprocess.call(["/app/hayabusa/hayabusa-2.12.0-lin-x64-musl", "json-timeline", "-f", f"/app/{filename}", "-m", "low", "-w", "-L", "-q", "-o", f"/app/{filename}.json"])
+                subprocess.call(["/app/hayabusa/hayabusa-2.12.0-lin-x64-musl", "json-timeline", "-f", f"/app/{filename}", "-m", "low", "-w", "-L", "-q", "-o", f"/app/{filename}.json"])
 
-            try:
-                with open(f"/app/{filename}.json", 'r') as f:
-                    file_content = [json.loads(line) for line in f]
-                    return jsonify(file_content), 200
-            except:
-                return jsonify({"error": "Something went wrong returning the hayabusa output"}), 500
+                try:
+                    with open(f"/app/{filename}.json", 'r') as f:
+                        file_content = [json.loads(line) for line in f]
+                        return jsonify(file_content), 200
+                except:
+                    return jsonify({"error": "Something went wrong returning the hayabusa output"}), 500
+                
+        except FileNotFoundError:
+            return jsonify({"error": "File not found during processing"}), 500
+        except:
+            return jsonify({"error": "Arbitrary error during file processing"}), 500
+
     else:
         return jsonify({'error': 'Unauthorized access'}), 401
     
